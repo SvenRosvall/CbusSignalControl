@@ -1,3 +1,7 @@
+// 3rd party libraries
+#include <Streaming.h>
+
+
 #include <CBUS2515.h>               // CAN controller and CBUS class
 #include <CBUSconfig.h>             // module configuration
 
