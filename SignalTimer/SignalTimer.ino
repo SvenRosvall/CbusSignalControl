@@ -248,16 +248,31 @@ void eventhandler(byte index, CANFrame *msg)
   switch (msg->data[0]) 
   {
   case OPC_ACON:
-  case OPC_ACOF:
+  case OPC_ASON:
     switch (ev1val)
     {
       case 1:
-        Serial << F("> setting signal to ") << ((msg->data[0] == OPC_ACON) ? "Stop" : "Clear") << endl;
-        trigger.set(msg->data[0] == OPC_ACON);
+        Serial << F("> setting signal to 'danger'") << endl;
+        trigger.set(true);
         break;
       case 10:
-        Serial << "point changed to " << ((msg->data[0] == OPC_ACOF) ? "Divert" : "Through") << endl;
-        pointInput.set(msg->data[0] == OPC_ACOF);
+        Serial << F("> point changed to 'through'") << endl;
+        pointInput.set(true);
+        break;
+    }
+    break;
+
+  case OPC_ACOF:
+  case OPC_ASOF:
+    switch (ev1val)
+    {
+      case 1:
+        Serial << F("> setting signal to 'clear'") << endl;
+        trigger.set(false);
+        break;
+      case 10:
+        Serial << F("> point changed to 'divert'") << endl;
+        pointInput.set(false);
         break;
     }
     break;

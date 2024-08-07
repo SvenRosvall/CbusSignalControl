@@ -193,7 +193,7 @@ void setupCBUS()
 SettableInput block1;
 SettableInput block2;
 SettableInput block3;
-BlockDistanceInput blockDistanceInput(block1, block2);
+BlockDistanceInput blockDistanceInput(block1, block2, block3);
 SettableInput pointInput;
 DistanceWithCondition distanceWithCondition(blockDistanceInput, pointInput);
 SlowLight greenLight(SIGNAL_GREEN_PIN);
@@ -204,7 +204,7 @@ Signal4Aspect signal(distanceWithCondition, greenLight, redLight, yellowLight1, 
 
 void setupASignal()
 {
-  signal.begin();
+  // Signal object is initialized by constructors.
 }
 
 void setup()
@@ -250,21 +250,40 @@ void eventhandler(byte index, CANFrame *msg)
   switch (msg->data[0]) 
   {
   case OPC_ACON:
-  case OPC_ACOF:
+  case OPC_ASON:
     switch (ev1val)
     {
       case 1:
-        block1.set(msg->data[0] == OPC_ACON);
+        block1.set(true);
         break;
       case 2:
-        block2.set(msg->data[0] == OPC_ACON);
+        block2.set(true);
         break;
       case 3:
-        block3.set(msg->data[0] == OPC_ACON);
+        block3.set(true);
         break;
       case 10:
         Serial << "point changed" << endl;
-        pointInput.set(msg->data[0] == OPC_ACOF);
+        pointInput.set(true);
+        break;
+    }
+    break;
+  case OPC_ACOF:
+  case OPC_ASOF:
+    switch (ev1val)
+    {
+      case 1:
+        block1.set(false);
+        break;
+      case 2:
+        block2.set(false);
+        break;
+      case 3:
+        block3.set(false);
+        break;
+      case 10:
+        Serial << "point changed" << endl;
+        pointInput.set(false);
         break;
     }
     break;
