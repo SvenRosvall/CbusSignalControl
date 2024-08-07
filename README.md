@@ -24,19 +24,22 @@ keep them separate from the signal pins.
 All examples have the following pin assignment:
 
 | Pin | Use |
-| ---: | :--- |
-|  2| CAN Interrupt |
-| 10 | CAN CS |
-| 11 | CAN SI |
-| 12 | CAN SO |
-| 13 | CAN SCK |
-| 3 | Signal Red light |
-| 5 | Signal first Yellow light |
-| 6 | Signal Green light |
-| 9 | Signal second Yellow light |
-| A3 | CBUS Yellow FLiM LED |
-| A4 | CBUS Green SLiM LED |
-| A5 | CBUS Switch |
+|----:| :--- |
+|   2 | CAN Interrupt |
+|  10 | CAN CS |
+|  11 | CAN SI |
+|  12 | CAN SO |
+|  13 | CAN SCK |
+|   4 | CBUS Green SLiM LED |
+|   7 | CBUS Yellow FLiM LED |
+|   8 | CBUS Switch |
+|   3 | Signal Green light |
+|   5 | Signal Red light |
+|   6 | Signal first Yellow light |
+|   9 | Signal second Yellow light |
+
+The CAN and CBUS pins correspond to the pins used in the MERG CBUS shield, kit 110.
+The signal pins are the remaining pins that can do PWM output. 
 
 Both examples react to track occupancy sensor events to decide if the 
 track in advance of the signal is occupied.
