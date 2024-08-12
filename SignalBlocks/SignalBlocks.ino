@@ -2,7 +2,7 @@
 
 /*
   Copyright (C) Sven Rosvall 2021 (sven@rosvall.ie)
-  
+
   This work is licensed under the:
       Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
    To view a copy of this license, visit:
@@ -97,11 +97,11 @@ const char VER_MIN = '0';                // code minor version
 const byte VER_BETA = 1;                 // code beta sub-version
 const byte MODULE_ID = 204;              // CBUS module type
 
-const unsigned long CAN_OSC_FREQ = 8000000;     // Oscillator frequency on the CAN2515 board
+const unsigned long CAN_OSC_FREQ = 16000000;     // Oscillator frequency on the CAN2515 board
 
-const byte LED_GRN = A4;                  // CBUS green SLiM LED pin
-const byte LED_YLW = A3;                  // CBUS yellow FLiM LED pin
-const byte SWITCH0 = A5;                  // CBUS push button switch pin
+const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
+const byte LED_YLW = 7;                  // CBUS yellow FLiM LED pin
+const byte SWITCH0 = 8;                  // CBUS push button switch pin
 
 // CBUS pins
 const byte CAN_INT_PIN = 2;  // Only pin 2 and 3 support interrupts
@@ -117,9 +117,9 @@ CBUSLED ledGrn, ledYlw;             // LED objects
 CBUSSwitch pb_switch;               // switch object
 
 // CANASIGNAL objects
-const byte SIGNAL_RED_PIN = 3;
-const byte SIGNAL_YELLOW_PIN = 5;
-const byte SIGNAL_GREEN_PIN = 6;
+const byte SIGNAL_RED_PIN = 5;
+const byte SIGNAL_YELLOW_PIN = 6;
+const byte SIGNAL_GREEN_PIN = 3;
 const byte SIGNAL_YELLOW_2_PIN = 9;
 
 // EV 1 - Control signal. OFF -> start timer.
@@ -193,7 +193,7 @@ void setupCBUS()
 SettableInput block1;
 SettableInput block2;
 SettableInput block3;
-BlockDistanceInput blockDistanceInput(block1, block2);
+BlockDistanceInput blockDistanceInput(block1, block2, block3);
 SettableInput pointInput;
 DistanceWithCondition distanceWithCondition(blockDistanceInput, pointInput);
 SlowLight greenLight(SIGNAL_GREEN_PIN);
@@ -250,21 +250,40 @@ void eventhandler(byte index, CANFrame *msg)
   switch (msg->data[0]) 
   {
   case OPC_ACON:
-  case OPC_ACOF:
+  case OPC_ASON:
     switch (ev1val)
     {
       case 1:
-        block1.set(msg->data[0] == OPC_ACON);
+        block1.set(true);
         break;
       case 2:
-        block2.set(msg->data[0] == OPC_ACON);
+        block2.set(true);
         break;
       case 3:
-        block3.set(msg->data[0] == OPC_ACON);
+        block3.set(true);
         break;
       case 10:
         Serial << "point changed" << endl;
-        pointInput.set(msg->data[0] == OPC_ACOF);
+        pointInput.set(true);
+        break;
+    }
+    break;
+  case OPC_ACOF:
+  case OPC_ASOF:
+    switch (ev1val)
+    {
+      case 1:
+        block1.set(false);
+        break;
+      case 2:
+        block2.set(false);
+        break;
+      case 3:
+        block3.set(false);
+        break;
+      case 10:
+        Serial << "point changed" << endl;
+        pointInput.set(false);
         break;
     }
     break;

@@ -97,11 +97,11 @@ const char VER_MIN = '0';                // code minor version
 const byte VER_BETA = 1;                 // code beta sub-version
 const byte MODULE_ID = 203;              // CBUS module type
 
-const unsigned long CAN_OSC_FREQ = 8000000;     // Oscillator frequency on the CAN2515 board
+const unsigned long CAN_OSC_FREQ = 16000000;     // Oscillator frequency on the CAN2515 board
 
-const byte LED_GRN = A4;                  // CBUS green SLiM LED pin
-const byte LED_YLW = A3;                  // CBUS yellow FLiM LED pin
-const byte SWITCH0 = A5;                  // CBUS push button switch pin
+const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
+const byte LED_YLW = 7;                  // CBUS yellow FLiM LED pin
+const byte SWITCH0 = 8;                  // CBUS push button switch pin
 
 // CBUS pins
 const byte CAN_INT_PIN = 2;  // Only pin 2 and 3 support interrupts
@@ -117,9 +117,9 @@ CBUSLED ledGrn, ledYlw;             // LED objects
 CBUSSwitch pb_switch;               // switch object
 
 // CANASIGNAL objects
-const byte SIGNAL_RED_PIN = 3;
-const byte SIGNAL_YELLOW_PIN = 5;
-const byte SIGNAL_GREEN_PIN = 6;
+const byte SIGNAL_RED_PIN = 5;
+const byte SIGNAL_YELLOW_PIN = 6;
+const byte SIGNAL_GREEN_PIN = 3;
 const byte SIGNAL_YELLOW_2_PIN = 9;
 
 // EV 1 - Control signal. OFF -> start timer.
@@ -202,7 +202,7 @@ Signal4Aspect signal(distanceWithCondition, greenLight, redLight, yellowLight1, 
 
 void setupASignal()
 {
-  // Signal object is initialized by constructors.
+  signal.begin();
 }
 
 void setup()
@@ -248,16 +248,31 @@ void eventhandler(byte index, CANFrame *msg)
   switch (msg->data[0]) 
   {
   case OPC_ACON:
-  case OPC_ACOF:
+  case OPC_ASON:
     switch (ev1val)
     {
       case 1:
-        Serial << F("> setting signal to ") << ((msg->data[0] == OPC_ACON) ? "Stop" : "Clear") << endl;
-        trigger.set(msg->data[0] == OPC_ACON);
+        Serial << F("> setting signal to 'danger'") << endl;
+        trigger.set(true);
         break;
       case 10:
-        Serial << "point changed to " << ((msg->data[0] == OPC_ACOF) ? "Divert" : "Through") << endl;
-        pointInput.set(msg->data[0] == OPC_ACOF);
+        Serial << F("> point changed to 'through'") << endl;
+        pointInput.set(true);
+        break;
+    }
+    break;
+
+  case OPC_ACOF:
+  case OPC_ASOF:
+    switch (ev1val)
+    {
+      case 1:
+        Serial << F("> setting signal to 'clear'") << endl;
+        trigger.set(false);
+        break;
+      case 10:
+        Serial << F("> point changed to 'divert'") << endl;
+        pointInput.set(false);
         break;
     }
     break;
